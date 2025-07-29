@@ -1,0 +1,11 @@
+replicaCount: 2
+image:
+  repository: github.com/surdiana/primasys
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources: {}

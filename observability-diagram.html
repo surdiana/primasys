@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Cloud Observability Architecture</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .diagram-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 40px 0;
+    }
+    .box {
+      border: 1.5px solid #222;
+      border-radius: 8px;
+      padding: 18px 28px;
+      margin: 8px;
+      background: #fff;
+      font-size: 1rem;
+      min-width: 220px;
+      box-shadow: 1px 2px 8px #eee;
+      text-align: center;
+    }
+    .row {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 10px 0;
+      gap: 24px;
+    }
+    .arrow-down {
+      font-size: 2.5rem;
+      margin: 0 auto;
+      text-align: center;
+      display: block;
+      line-height: 1.2;
+    }
+    .arrow-up {
+      font-size: 2.5rem;
+      margin: 0 auto;
+      text-align: center;
+      display: block;
+      transform: rotate(180deg);
+      line-height: 1.2;
+    }
+    @media (max-width: 900px) {
+      .row {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .box {
+        min-width: 170px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="diagram-container">
+
+    <!-- User/Operator -->
+    <div class="row">
+      <div class="box">
+        <b>User/Operator</b><br>
+        (Grafana Dashboard)
+      </div>
+    </div>
+    <span class="arrow-down">&#8595;</span>
+
+    <!-- Observability Stack (Central) -->
+    <div class="row">
+      <div class="box" style="min-width:300px">
+        <b>Observability Stack (Central)</b><br>
+        - Grafana<br>
+        - Loki (logging)<br>
+        - Tempo / Jaeger (tracing)<br>
+        - Prometheus (Federation)<br>
+        - Alertmanager
+      </div>
+    </div>
+    <span class="arrow-down">&#8595;</span>
+
+    <!-- Clusters -->
+    <div class="row">
+      <div class="box">
+        <b>Cluster 1 (AWS)</b><br>
+        - Prometheus<br>
+        - Loki Agent<br>
+        - Service Mesh<br>
+        - Microservices
+      </div>
+      <div class="box">
+        <b>Cluster 2 (Azure)</b><br>
+        - Prometheus<br>
+        - Loki Agent<br>
+        - Service Mesh<br>
+        - Microservices
+      </div>
+      <div class="box">
+        <b>Cluster 3 (GCP)</b><br>
+        - Prometheus<br>
+        - Loki Agent<br>
+        - Service Mesh<br>
+        - Microservices
+      </div>
+      <div class="box">
+        <b>Cluster 4</b>
+      </div>
+      <div class="box">
+        <b>Cluster 5</b>
+      </div>
+    </div>
+    <span class="arrow-down">&#8593;</span>
+
+    <!-- Alert Channels -->
+    <div class="row">
+      <div class="box">
+        <b>Alert Channels</b><br>
+        Slack, Email, Telegram, SMS, etc.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
