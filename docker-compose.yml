@@ -1,0 +1,182 @@
+version: '3.8'
+
+services:
+  merchant-frontend:
+    build: 
+      context: ./merchant-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - payment-network
+
+  api-gateway:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  va-management-service:
+    build: 
+      context: ./va-management
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  transaction-service:
+    build:
+      context: ./transaction-service
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  auth-service:
+    build:
+      context: ./auth-service
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  merchant-dashboard:
+    build:
+      context: ./merchant-dashboard
+    networks:
+      - payment-network
+
+  admin-dashboard:
+    build:
+      context: ./admin-dashboard
+    networks:
+      - payment-network
+
+  webhook-dispatcher:
+    build:
+      context: ./webhook-dispatcher
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  reconciliation-service:
+    build:
+      context: ./reconciliation-service
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  fraud-detection-service:
+    build:
+      context: ./fraud-detection
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  redis-cache:
+    image: redis:6-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  payment-notification-service:
+    build:
+      context: ./payment-notification
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  bca-connector:
+    build:
+      context: ./bca-connector
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  permata-connector:
+    build:
+      context: ./permata-connector
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  cimb-connector:
+    build:
+      context: ./cimb-connector
+    networks:
+      - payment-network
+    deploy:
+      replicas: 2
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - payment-network
+    deploy:
+      replicas: 3
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - payment-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - payment-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - payment-network
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    networks:
+      - payment-network
+
+networks:
+  payment-network:
+    driver: overlay
+
+volumes:
+  redis-data:
+  prometheus-data:
+  grafana-data:
